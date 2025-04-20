@@ -1,108 +1,121 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rozkład ZTM</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        select, button {
-            padding: 10px;
-            font-size: 16px;
-            margin: 10px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rozkład ZTM Warszawa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f2f2f2;
+    }
+    h1 {
+      text-align: center;
+    }
+    select, button {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto;
+      padding: 10px;
+      font-size: 16px;
+    }
+    table {
+      margin: 20px auto;
+      width: 100%;
+      max-width: 600px;
+      border-collapse: collapse;
+      background-color: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Rozkład ZTM - Wybór przystanku i linii1</h1>
+<h1>Rozkład jazdy ZTM (Warszawa)</h1>
 
 <label for="przystanek">Wybierz przystanek:</label>
 <select id="przystanek">
-    <option value="CIEPŁOWNIA WOLA 04">CIEPŁOWNIA WOLA 04</option>
-    <option value="403902">DW. ZACHODNI 01</option>
-    <option value="PL. BANKOWY 02">PL. BANKOWY 02</option>
-    <!-- Możesz dodać więcej opcji przystanków -->
+  <option value="6013">CIEPŁOWNIA WOLA 04</option>
+  <!-- Dodaj więcej ID przystanków jeśli chcesz -->
 </select>
 
 <label for="linia">Wybierz linię:</label>
 <select id="linia">
-    <option value="713">713</option>
-    <option value="190">190</option>
-    <option value="109">109</option>
-    <!-- Możesz dodać więcej opcji linii -->
+  <option value="713">713</option>
+  <option value="109">109</option>
+  <option value="190">190</option>
+  <!-- Dodaj więcej linii jeśli chcesz -->
 </select>
 
-<button onclick="fetchData()">Pobierz rozkład</button>
+<button onclick="pobierzRozklad()">Pobierz rozkład</button>
 
-<h2>Rozkład jazdy</h2>
+<p class="error" id="blad"></p>
+
 <table id="rozklad">
+  <thead>
     <tr>
-        <th>Godzina planowana</th>
-        <th>Godzina rzeczywista</th>
-        <th>Opóźnienie (min)</th>
-        <th>Kierunek</th>
+      <th>Godzina planowana</th>
+      <th>Godzina rzeczywista</th>
+      <th>Opóźnienie</th>
+      <th>Kierunek</th>
     </tr>
-    <!-- Dane o odjazdach będą wyświetlane tutaj -->
+  </thead>
+  <tbody>
+    <!-- Dane z API pojawią się tutaj -->
+  </tbody>
 </table>
 
 <script>
-    function fetchData() {
-        const przystanek = document.getElementById("przystanek").value;
-        const linia = document.getElementById("linia").value;
+  async function pobierzRozklad() {
+    const blad = document.getElementById("blad");
+    blad.textContent = "";
+    const przystanekId = document.getElementById("przystanek").value;
+    const linia = document.getElementById("linia").value;
+    const rozkladBody = document.querySelector("#rozklad tbody");
+    rozkladBody.innerHTML = "<tr><td colspan='4'>Ładowanie danych...</td></tr>";
 
-        const apiKey = "af6a49a0-f7ee-4f5f-b4e6-532c24d05f6c"; // Wstaw swój klucz API
-        const idPrzystanku = "403902"; // Zmien na odpowiednie ID przystanku
+    const apiKey = "af6a49a0-f7ee-4f5f-b4e6-532c24d05f6c"; // TODO: Wstaw tu swój klucz API z ZTM
 
-        const url = `https://api.um.warszawa.pl/api/action/dbtimetable_get/?id=${idPrzystanku}&id2=04&line=${linia}&apikey=${apiKey}`;
+    try {
+      const response = await fetch(`https://api.um.warszawa.pl/api/action/dbtimetable_get/?id=${przystanekId}&id2=04&line=${linia}&apikey=${apiKey}`);
+      const data = await response.json();
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const result = data.result;
-                const table = document.getElementById("rozklad");
-                table.innerHTML = `
-                    <tr>
-                        <th>Godzina planowana</th>
-                        <th>Godzina rzeczywista</th>
-                        <th>Opóźnienie (min)</th>
-                        <th>Kierunek</th>
-                    </tr>
-                `; // Zresetowanie tabeli
+      if (!data.result || data.result.length === 0) {
+        rozkladBody.innerHTML = "<tr><td colspan='4'>Brak danych.</td></tr>";
+        return;
+      }
 
-                result.forEach(item => {
-                    const row = table.insertRow();
-                    row.insertCell(0).textContent = item.czas;
-                    row.insertCell(1).textContent = item.czas_rzeczywisty;
-                    row.insertCell(2).textContent = item.opoznienie;
-                    row.insertCell(3).textContent = item.kierunek;
-                });
-            })
-            .catch(error => {
-                console.error("Błąd pobierania danych:", error);
-            });
+      rozkladBody.innerHTML = "";
+      data.result.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.czas}</td>
+          <td>${item.czas_rzeczywisty || "-"}</td>
+          <td>${item.opoznienie || "-"}</td>
+          <td>${item.kierunek}</td>
+        `;
+        rozkladBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error("Błąd:", error);
+      blad.textContent = "Wystąpił błąd podczas pobierania danych.";
+      rozkladBody.innerHTML = "";
     }
+  }
 </script>
 
 </body>
