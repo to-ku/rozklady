@@ -49,7 +49,7 @@
 
 <label for="przystanek">Wybierz przystanek:</label>
 <select id="przystanek">
-  <option value="6013">CIEPŁOWNIA WOLA 04</option>
+  <option value="403902">CIEPŁOWNIA WOLA 04</option>
   <!-- Dodaj więcej ID przystanków jeśli chcesz -->
 </select>
 
@@ -95,7 +95,7 @@
       const data = await response.json();
 
       if (!data.result || data.result.length === 0) {
-        rozkladBody.innerHTML = "<tr><td colspan='4'>Brak danych.${przystanekId}</td></tr>";
+        rozkladBody.innerHTML = "<tr><td colspan='4'>${item.przystanek}</td></tr>";
         return;
       }
 
