@@ -95,7 +95,7 @@
       const data = await response.json();
 
       if (!data.result || data.result.length === 0) {
-        rozkladBody.innerHTML = "<tr><td colspan='4'>Brak danych.</td></tr>";
+        rozkladBody.innerHTML = "<tr><td colspan='4'>Brak danych.${przystanekId}</td></tr>";
         return;
       }
 
