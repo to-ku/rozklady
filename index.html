@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rozkład ZTM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Rozkład ZTM - Wybór przystanku i linii</h1>
+
+<label for="przystanek">Wybierz przystanek:</label>
+<select id="przystanek">
+    <option value="CIEPŁOWNIA WOLA 04">CIEPŁOWNIA WOLA 04</option>
+    <option value="DW. ZACHODNI 01">DW. ZACHODNI 01</option>
+    <option value="PL. BANKOWY 02">PL. BANKOWY 02</option>
+    <!-- Możesz dodać więcej opcji przystanków -->
+</select>
+
+<label for="linia">Wybierz linię:</label>
+<select id="linia">
+    <option value="713">713</option>
+    <option value="190">190</option>
+    <option value="109">109</option>
+    <!-- Możesz dodać więcej opcji linii -->
+</select>
+
+<button onclick="fetchData()">Pobierz rozkład</button>
+
+<h2>Rozkład jazdy</h2>
+<table id="rozklad">
+    <tr>
+        <th>Godzina planowana</th>
+        <th>Godzina rzeczywista</th>
+        <th>Opóźnienie (min)</th>
+        <th>Kierunek</th>
+    </tr>
+    <!-- Dane o odjazdach będą wyświetlane tutaj -->
+</table>
+
+<script>
+    function fetchData() {
+        const przystanek = document.getElementById("przystanek").value;
+        const linia = document.getElementById("linia").value;
+
+        const apiKey = "WPISZ_TUTAJ_SWOJ_KLUCZ_API"; // Wstaw swój klucz API
+        const idPrzystanku = "TU_ID_PRZYSTANKU"; // Zmien na odpowiednie ID przystanku
+
+        const url = `https://api.um.warszawa.pl/api/action/dbtimetable_get/?id=${idPrzystanku}&id2=04&line=${linia}&apikey=${apiKey}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const result = data.result;
+                const table = document.getElementById("rozklad");
+                table.innerHTML = `
+                    <tr>
+                        <th>Godzina planowana</th>
+                        <th>Godzina rzeczywista</th>
+                        <th>Opóźnienie (min)</th>
+                        <th>Kierunek</th>
+                    </tr>
+                `; // Zresetowanie tabeli
+
+                result.forEach(item => {
+                    const row = table.insertRow();
+                    row.insertCell(0).textContent = item.czas;
+                    row.insertCell(1).textContent = item.czas_rzeczywisty;
+                    row.insertCell(2).textContent = item.opoznienie;
+                    row.insertCell(3).textContent = item.kierunek;
+                });
+            })
+            .catch(error => {
+                console.error("Błąd pobierania danych:", error);
+            });
+    }
+</script>
+
+</body>
+</html>
