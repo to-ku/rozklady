@@ -73,19 +73,19 @@
         const tbody = document.getElementById("timetable-body");
 
         data.result.forEach(entry => {
-          let czas = "", kierunek = "", linia = "";
+          let czas = "", kierunek = "", trasa = "";
 
           for (const field of entry.values) {
             if (field.key === "czas") czas = field.value;
             else if (field.key === "kierunek") kierunek = field.value;
-            else if (field.key === "linia") linia = field.value;
+            else if (field.key === "trasa") trasa = field.value;
           }
 
           const row = document.createElement("tr");
           row.innerHTML = `
             <td>${czas}</td>
             <td>${kierunek}</td>
-            <td>${linia}</td>
+            <td>${trasa}</td>
           `;
           tbody.appendChild(row);
         });
