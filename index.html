@@ -77,7 +77,7 @@
 
         //const url = `https://api.um.warszawa.pl/api/action/dbtimetable_get/?id=88cd555f-6f31-43ca-9de4-66c479ad5942&busstopId=${idPrzystanku}&busstopNr=04&line=${linia}&apikey=${apiKey}`;
         //           https://api.um.warszawa.pl/api/action/dbtimetable_get?id=e923fa0e-d96c-43f9-ae6e-60518c9f3238&busstopId=wartość&busstopNr=wartość&line=wartość&apikey=wartość
-        const url = `https://api.um.warszawa.pl/api/action/dbtimetable_get?id=e923fa0e-d96c-43f9-ae6e-60518c9f3238&busstopId=5012&busstopNr=04&line=713&apikey=61fd7166-ce67-4338-ada7-46a89252d451`;
+        const url = `https://api.um.warszawa.pl/api/action/dbtimetable_get/?id=e923fa0e-d96c-43f9-ae6e-60518c9f3238&busstopId=5012&busstopNr=04&line=713&apikey=61fd7166-ce67-4338-ada7-46a89252d451`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -97,7 +97,7 @@
                     row.insertCell(0).textContent = item.czas;
                     row.insertCell(1).textContent = item.czas_rzeczywisty;
                     row.insertCell(2).textContent = item.opoznienie;
-                    row.insertCell(3).textContent = item.kierunek;
+                    row.insertCell(3).textContent = "1";
                 });
             })
             .catch(error => {
