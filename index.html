@@ -36,7 +36,7 @@
 </head>
 <body>
 
-<h1>Rozkład ZTM - Wybór przystanku i linii1</h1>
+<h1>Rozkład ZTM - Wybór przystanku i linii 2</h1>
 
 <label for="przystanek">Wybierz przystanek:</label>
 <select id="przystanek">
@@ -95,9 +95,9 @@
                 result.forEach(item => {
                     const row = table.insertRow();
                     row.insertCell(0).textContent = item.czas;
-                    row.insertCell(1).textContent = item.czas_rzeczywisty;
-                    row.insertCell(2).textContent = item.opoznienie;
-                    row.insertCell(3).textContent = "1";
+                    row.insertCell(1).textContent = "2";
+                    row.insertCell(2).textContent = "3";
+                    row.insertCell(3).textContent = item.kierunek;
                 });
             })
             .catch(error => {
